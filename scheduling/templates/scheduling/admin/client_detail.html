@@ -1,0 +1,66 @@
+{% extends 'scheduling/base.html' %}
+
+{% block title %}Admin - Detalhes do Cliente{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Cliente: {{ client.name }}</h2>
+    <a href="{% url 'scheduling:admin_client_list' %}" class="btn btn-outline-secondary">Voltar</a>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Informações</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Token:</strong> <code>{{ client.booking_token }}</code></p>
+                <p><strong>Nome:</strong> {{ client.name }}</p>
+                <p><strong>Telefone:</strong> {{ client.phone }}</p>
+                <p><strong>Email:</strong> {{ client.email|default:"-" }}</p>
+                <p><strong>Cliente desde:</strong> {{ client.created_at|date:"d/m/Y" }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Histórico de Agendamentos</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Serviço</th>
+                            <th>Profissional</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for scheduling in schedulings %}
+                        <tr>
+                            <td>{{ scheduling.time_slot.date_slot.date|date:"d/m/Y" }}</td>
+                            <td>{{ scheduling.time_slot.start_time|time:"H:i" }}</td>
+                            <td>{{ scheduling.service.name }}</td>
+                            <td>{{ scheduling.time_slot.date_slot.professional.name }}</td>
+                            <td>
+                                <span class="badge badge-{% if scheduling.status == 'confirmed' %}success{% elif scheduling.status == 'cancelled' %}danger{% else %}secondary{% endif %}">
+                                    {{ scheduling.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">Nenhum agendamento.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+"""
+WSGI config for nail_salon project.
+"""
+
+import os
+
+from django.core.wsgi import get_wsgi_application
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nail_salon.settings')
+
+application = get_wsgi_application()

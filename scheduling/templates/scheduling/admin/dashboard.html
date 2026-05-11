@@ -1,0 +1,111 @@
+{% extends 'scheduling/base.html' %}
+
+{% block title %}Admin - Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Painel Administrativo</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Agendamentos Hoje</h5>
+                <p class="display-4">{{ total_schedulings_today }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Próximos Agendamentos</h5>
+                <p class="display-4">{{ upcoming_schedulings }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total de Clientes</h5>
+                <p class="display-4">{{ total_clients }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Agendamentos Recentes</h4>
+                <div>
+                    <a href="{% url 'scheduling:admin_scheduling_list' %}" class="btn btn-sm btn-primary">
+                        Ver Todos
+                    </a>
+                    <a href="{% url 'scheduling:admin_create_date_slot' %}" class="btn btn-sm btn-success">
+                        Criar Data
+                    </a>
+                    <a href="{% url 'scheduling:admin_quick_schedule' %}" class="btn btn-sm btn-warning">
+                        Agendamento Rápido
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Serviço</th>
+                            <th>Data/Hora</th>
+                            <th>Profissional</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for scheduling in recent_schedulings %}
+                        <tr>
+                            <td>{{ scheduling.client.name }}<br><small>{{ scheduling.client.phone }}</small></td>
+                            <td>{{ scheduling.service.name }}</td>
+                            <td>{{ scheduling.time_slot.date_slot.date|date:"d/m/Y" }}
+                                {{ scheduling.time_slot.start_time|time:"H:i" }}</td>
+                            <td>{{ scheduling.time_slot.date_slot.professional.name }}</td>
+                            <td>
+                                <span class="badge badge-{% if scheduling.status == 'confirmed' %}success{% elif scheduling.status == 'cancelled' %}danger{% else %}secondary{% endif %}">
+                                    {{ scheduling.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">Nenhum agendamento recente.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Links Rápidos</h4>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <a href="{% url 'scheduling:admin_client_list' %}" class="list-group-item">
+                        Gerenciar Clientes
+                    </a>
+                    <a href="{% url 'admin:scheduling_professional_changelist' %}" class="list-group-item">
+                        Gerenciar Profissionais
+                    </a>
+                    <a href="{% url 'admin:scheduling_service_changelist' %}" class="list-group-item">
+                        Gerenciar Serviços
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'scheduling/base.html' %}
+
+{% block title %}Horários Disponíveis{% endblock %}
+
+{% block content %}
+<h2>Horários Disponíveis</h2>
+
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-3">
+        <label>Serviço</label>
+        <select name="service" class="form-control" id="serviceSelect">
+            <option value="">Selecione...</option>
+            {% for service in services %}
+            <option value="{{ service.id }}" {% if service.id == selected_service_id|add:0 %}selected{% endif %}>
+                {{ service.name }} - R$ {{ service.price }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label>Profissional</label>
+        <select name="professional" class="form-control">
+            <option value="">Qualquer um</option>
+            {% for prof in professionals %}
+            <option value="{{ prof.id }}" {% if prof.id == selected_professional_id|add:0 %}selected{% endif %}>
+                {{ prof.name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label>Data</label>
+        <input type="date" name="date" class="form-control" value="{{ selected_date }}">
+    </div>
+    <div class="col-md-3 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary btn-block">Buscar</button>
+    </div>
+</form>
+
+{% if time_slots %}
+<div class="row">
+    {% for slot in time_slots %}
+    <div class="col-md-3 mb-3">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }}</h5>
+                <p class="card-text">
+                    <strong>Profissional:</strong> {{ slot.date_slot.professional.name }}
+                </p>
+                <p class="card-text mt-auto">
+                    <span class="badge badge-success">Disponível</span>
+                </p>
+                <a href="{% url 'scheduling:book_slot' slot.id %}?service={{ selected_service_id }}"
+                   class="btn btn-success btn-block mt-2">
+                    Agendar
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% elif selected_date %}
+<div class="alert alert-info">
+    Nenhum horário disponível para esta data. Tente outra data ou profissional.
+</div>
+{% else %}
+<div class="alert alert-secondary">
+    Selecione uma data para ver os horários disponíveis.
+</div>
+{% endif %}
+{% endblock %}

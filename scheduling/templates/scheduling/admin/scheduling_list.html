@@ -1,0 +1,91 @@
+{% extends 'scheduling/base.html' %}
+
+{% block title %}Admin - Agendamentos{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Todos os Agendamentos</h2>
+
+<div class="card">
+    <div class="card-header">
+        <form method="get" class="row g-3 mb-0">
+            <div class="col-md-3">
+                <select name="status" class="form-control">
+                    <option value="">Todos os status</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="date" class="form-control" value="{{ request.GET.date }}">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                <a href="{% url 'scheduling:admin_scheduling_list' %}" class="btn btn-secondary">Limpar</a>
+            </div>
+        </form>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Serviço</th>
+                    <th>Data/Hora</th>
+                    <th>Profissional</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for scheduling in schedulings %}
+                <tr>
+                    <td>{{ scheduling.id }}</td>
+                    <td>{{ scheduling.client.name }}<br><small>{{ scheduling.client.phone }}</small></td>
+                    <td>{{ scheduling.service.name }}</td>
+                    <td>{{ scheduling.time_slot.date_slot.date|date:"d/m/Y" }}
+                        {{ scheduling.time_slot.start_time|time:"H:i" }}</td>
+                    <td>{{ scheduling.time_slot.date_slot.professional.name }}</td>
+                    <td>
+                        <span class="badge badge-{% if scheduling.status == 'confirmed' %}success{% elif scheduling.status == 'cancelled' %}danger{% else %}secondary{% endif %}">
+                            {{ scheduling.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'scheduling:admin_client_detail' scheduling.client.id %}"
+                           class="btn btn-sm btn-info">Cliente</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">Nenhum agendamento encontrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if schedulings.has_other_pages %}
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if schedulings.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ schedulings.previous_page_number }}">Anterior</a>
+                </li>
+                {% endif %}
+                <li class="page-item active">
+                    <span class="page-link">Página {{ schedulings.number }} de {{ schedulings.paginator.num_pages }}</span>
+                </li>
+                {% if schedulings.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ schedulings.next_page_number }}">Próxima</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

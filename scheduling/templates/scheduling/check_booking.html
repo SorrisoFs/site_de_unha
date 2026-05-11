@@ -1,0 +1,94 @@
+{% extends 'scheduling/base.html' %}
+
+{% block title %}Meus Agendamentos{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-4">Consultar Agendamento</h2>
+
+        <div class="card">
+            <div class="card-body">
+                <form method="get" class="mb-0">
+                    <div class="input-group">
+                        <input type="text" name="token" class="form-control"
+                               placeholder="Digite seu código de agendamento"
+                               value="{{ request.GET.token|default:'' }}">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary">Consultar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-danger mt-3">{{ error }}</div>
+        {% endif %}
+
+        {% if schedulings %}
+        <div class="mt-4">
+            <h4>Seus Agendamentos</h4>
+            {% for scheduling in schedulings %}
+            <div class="card mt-2">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5>{{ scheduling.service.name }}</h5>
+                            <p>
+                                <strong>Data:</strong> {{ scheduling.time_slot.date_slot.date|date:"d/m/Y" }}<br>
+                                <strong>Horário:</strong> {{ scheduling.time_slot.start_time|time:"H:i" }}<br>
+                                <strong>Profissional:</strong> {{ scheduling.time_slot.date_slot.professional.name }}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <span class="badge badge-{% if scheduling.status == 'confirmed' %}success{% elif scheduling.status == 'cancelled' %}danger{% else %}secondary{% endif %}">
+                                {{ scheduling.get_status_display }}
+                            </span>
+                            {% if scheduling.status == 'confirmed' %}
+                            <button type="button" class="btn btn-danger btn-sm mt-2 btn-cancel"
+                                    data-token="{{ client.booking_token }}"
+                                    data-id="{{ scheduling.id }}">
+                                Cancelar
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.btn-cancel').forEach(btn => {
+    btn.addEventListener('click', function() {
+        if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
+            const token = this.dataset.token;
+            const id = this.dataset.id;
+
+            fetch('{% url "scheduling:cancel_booking" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `token=${token}&scheduling_id=${id}`
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Erro ao cancelar: ' + data.error);
+                }
+            });
+        }
+    });
+});
+</script>
+{% endblock %}

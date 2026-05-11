@@ -1,0 +1,18 @@
+{% extends 'scheduling/base.html' %}
+
+{% block title %}Erro{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="alert alert-danger">
+            <h4 class="alert-heading">Ops!</h4>
+            <p>{{ message }}</p>
+            <hr>
+            <a href="{% url 'scheduling:available_slots' %}" class="btn btn-outline-danger">
+                Voltar para Horários
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

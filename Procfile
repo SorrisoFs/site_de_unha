@@ -1,0 +1,1 @@
+web: gunicorn nail_salon.wsgi:application --workers 2 --threads 4

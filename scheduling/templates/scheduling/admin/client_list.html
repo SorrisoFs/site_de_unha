@@ -1,0 +1,76 @@
+{% extends 'scheduling/base.html' %}
+
+{% block title %}Admin - Clientes{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Todos os Clientes</h2>
+
+<div class="card">
+    <div class="card-header">
+        <form method="get" class="row g-3 mb-0">
+            <div class="col-md-8">
+                <input type="text" name="search" class="form-control"
+                       placeholder="Buscar por nome, telefone ou código..."
+                       value="{{ request.GET.search }}">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+                <a href="{% url 'scheduling:admin_client_list' %}" class="btn btn-secondary">Limpar</a>
+            </div>
+        </form>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Token</th>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>Email</th>
+                    <th>Agendamentos</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for client in clients %}
+                <tr>
+                    <td><code>{{ client.booking_token|truncatechars:8 }}</code></td>
+                    <td>{{ client.name }}</td>
+                    <td>{{ client.phone }}</td>
+                    <td>{{ client.email|default:"-" }}</td>
+                    <td>{{ client.schedulings.count }}</td>
+                    <td>
+                        <a href="{% url 'scheduling:admin_client_detail' client.id %}"
+                           class="btn btn-sm btn-info">Ver Detalhes</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">Nenhum cliente encontrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if clients.has_other_pages %}
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if clients.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ clients.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Anterior</a>
+                </li>
+                {% endif %}
+                <li class="page-item active">
+                    <span class="page-link">Página {{ clients.number }} de {{ clients.paginator.num_pages }}</span>
+                </li>
+                {% if clients.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ clients.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Próxima</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
