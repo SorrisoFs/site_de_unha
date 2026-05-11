@@ -67,6 +67,7 @@ transition: all 0.3s;
 box-shadow: 0 10px 30px rgba(255, 255, 255, 0.4);
 display: inline-block;
 text-decoration: none;
+cursor: pointer;
 }
 
 .cta-button:hover {
@@ -100,6 +101,7 @@ box-shadow: 0 10px 40px rgba(0,0,0,0.08);
 transition: all 0.3s;
 height: 100%;
 border: 3px solid transparent;
+cursor: pointer;
 }
 
 .service-card:hover {
@@ -166,6 +168,17 @@ border-radius: 25px;
 padding: 14px 20px;
 font-weight: 700;
 transition: all 0.3s;
+cursor: pointer;
+background: white;
+border: 2px solid #ff6b6b;
+color: #ff6b6b;
+}
+
+.time-slot-btn:hover {
+background: #ff6b6b;
+color: white;
+transform: translateY(-3px);
+box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
 }
 
 .time-slot-btn.selected {
@@ -403,34 +416,34 @@ display: block;
 
 <!-- Success Modal -->
 <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="successModalLabel">
-                    <i class="fas fa-check-circle mr-2"></i>Agendamento Confirmado!
-                </h5>
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-check-circle text-success mb-3" viewBox="0 0 16 16">
-                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                </svg>
-                <h4>Seu agendamento foi realizado com sucesso!</h4>
-                <div class="alert alert-warning mt-3">
-                    <strong>Guarde seu código de agendamento:</strong>
-                    <div class="display-4 mt-2" id="bookingTokenDisplay"></div>
-                </div>
-                <p class="text-muted">Você receberá este código para consultar ou cancelar seu agendamento.</p>
-            </div>
-            <div class="modal-footer">
-                <a href="{% url 'scheduling:check_booking' %}" class="btn btn-primary">
-                    <i class="fas fa-calendar-check mr-2"></i>Ver Meus Agendamentos
-                </a>
-            </div>
-        </div>
-    </div>
+<div class="modal-dialog" role="document">
+<div class="modal-content">
+<div class="modal-header bg-success text-white">
+<h5 class="modal-title" id="successModalLabel">
+<i class="fas fa-check-circle mr-2"></i>Agendamento Confirmado!
+</h5>
+<button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+<div class="modal-body text-center">
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-check-circle text-success mb-3" viewBox="0 0 16 16">
+<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+</svg>
+<h4>Seu agendamento foi realizado com sucesso!</h4>
+<div class="alert alert-warning mt-3">
+<strong>Guarde seu código de agendamento:</strong>
+<div class="display-4 mt-2" id="bookingTokenDisplay"></div>
+</div>
+<p class="text-muted">Você receberá este código para consultar ou cancelar seu agendamento.</p>
+</div>
+<div class="modal-footer">
+<a href="{% url 'scheduling:check_booking' %}" class="btn btn-primary">
+<i class="fas fa-calendar-check mr-2"></i>Ver Meus Agendamentos
+</a>
+</div>
+</div>
+</div>
 </div>
 {% endblock %}
 
@@ -442,10 +455,15 @@ display: block;
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+console.log('Page loaded, initializing calendar...');
+
 var calendarEl = document.getElementById('calendar');
 var availableDates = {{ available_dates_json|safe }};
 
+console.log('Available dates:', availableDates);
+
 if (availableDates.length === 0) {
+console.log('No available dates');
 return;
 }
 
@@ -472,6 +490,7 @@ textColor: 'white'
 }),
 dateClick: function(info) {
 var clickedDate = info.dateStr;
+console.log('Date clicked:', clickedDate);
 
 if (availableDates.includes(clickedDate)) {
 openBookingModal(clickedDate);
@@ -489,8 +508,10 @@ return [];
 });
 
 calendar.render();
+console.log('Calendar rendered');
 
 function openBookingModal(date) {
+console.log('Opening modal for date:', date);
 $('#selectedDate').val(formatDate(date));
 $('#selectedDateInput').val(date);
 $('#selectedTimeSlot').val('');
@@ -501,11 +522,16 @@ $('#selectedDateInput').val(date);
 $('#bookingMessage').addClass('d-none');
 
 fetch('/api/horarios/?date=' + date)
-.then(response => response.json())
+.then(response => {
+console.log('Response status:', response.status);
+return response.json();
+})
 .then(data => {
+console.log('Time slots data:', data);
 displayTimeSlots(data.slots);
 })
 .catch(error => {
+console.error('Error fetching time slots:', error);
 $('#timeSlots').html('<span class="text-danger"><i class="fas fa-exclamation-triangle mr-2"></i>Erro ao carregar horários.</span>');
 });
 
@@ -515,6 +541,8 @@ $('#bookingModal').modal('show');
 function displayTimeSlots(slots) {
 var container = $('#timeSlots');
 container.empty();
+
+console.log('Displaying slots:', slots);
 
 if (slots.length === 0) {
 container.html('<span class="text-muted"><i class="fas fa-calendar-times mr-2"></i>Não há horários disponíveis para esta data.</span>');
@@ -529,6 +557,7 @@ $('.time-slot-btn').removeClass('selected');
 $(this).addClass('selected');
 $('#selectedTimeSlot').val(slot.id);
 $('#timeSlotHelp').text('Horário selecionado: ' + slot.start_time + ' - ' + slot.professional);
+console.log('Time slot selected:', slot.id);
 });
 container.append(btn);
 });
@@ -541,8 +570,10 @@ return date.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', mont
 
 $('#bookingForm').on('submit', function(e) {
 e.preventDefault();
+console.log('Form submitted');
 
 var formData = $(this).serialize();
+console.log('Form data:', formData);
 
 if (!$('#selectedTimeSlot').val()) {
 $('#bookingMessage').removeClass('d-none').addClass('alert alert-danger').html('<i class="fas fa-exclamation-circle mr-2"></i>Selecione um horário.');
@@ -558,8 +589,12 @@ headers: {
 'X-CSRFToken': getCsrfToken()
 }
 })
-.then(response => response.json())
+.then(response => {
+console.log('Booking response status:', response.status);
+return response.json();
+})
 .then(data => {
+console.log('Booking response data:', data);
 if (data.success) {
 $('#bookingModal').modal('hide');
 $('#bookingTokenDisplay').text(data.booking_token);
@@ -570,6 +605,7 @@ $('#confirmBooking').prop('disabled', false).html('<i class="fas fa-check mr-2">
 }
 })
 .catch(error => {
+console.error('Booking error:', error);
 $('#bookingMessage').removeClass('d-none').addClass('alert alert-danger').html('<i class="fas fa-exclamation-triangle mr-2"></i>Erro ao realizar agendamento. Tente novamente.');
 $('#confirmBooking').prop('disabled', false).html('<i class="fas fa-check mr-2"></i>Confirmar Agendamento');
 });
