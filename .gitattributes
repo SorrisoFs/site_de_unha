@@ -1,0 +1,15 @@
+# Git line endings
+* text=auto
+
+# Shell scripts should use LF
+*.sh text eol=lf
+
+# Python files
+*.py text eol=lf
+
+# Batch files should use CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Documentation
+*.md text eol=lf
