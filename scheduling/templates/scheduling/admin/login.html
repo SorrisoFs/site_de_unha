@@ -1,0 +1,115 @@
+{% extends 'scheduling/base.html' %}
+
+{% block title %}Login - Painel Administrativo{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .login-card {
+        width: 100%;
+        max-width: 400px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .login-header {
+        background: linear-gradient(135deg, #e91e63, #f8bbd0);
+        color: white;
+        border-radius: 15px 15px 0 0;
+        padding: 30px;
+        text-align: center;
+    }
+    .login-header h2 {
+        margin: 0;
+        font-weight: bold;
+    }
+    .login-header i {
+        font-size: 3rem;
+        margin-bottom: 10px;
+    }
+    .login-body {
+        padding: 30px;
+    }
+    .form-control {
+        border-radius: 10px;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+    }
+    .form-control:focus {
+        border-color: #e91e63;
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+    .btn-login {
+        background: #e91e63;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-weight: bold;
+        width: 100%;
+        transition: all 0.3s;
+    }
+    .btn-login:hover {
+        background: #c2185b;
+        transform: translateY(-2px);
+    }
+    .back-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .back-link a {
+        color: #e91e63;
+        text-decoration: none;
+    }
+    .back-link a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="card login-card">
+        <div class="login-header">
+            <i class="fas fa-spa"></i>
+            <h2>Nail Salon</h2>
+            <p class="mb-0">Painel Administrativo</p>
+        </div>
+        <div class="login-body">
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                Usuário ou senha incorretos.
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_username">Usuário</label>
+                    <input type="text" name="username" class="form-control" id="id_username"
+                           placeholder="Digite seu usuário" required>
+                </div>
+                <div class="form-group">
+                    <label for="id_password">Senha</label>
+                    <input type="password" name="password" class="form-control" id="id_password"
+                           placeholder="Digite sua senha" required>
+                </div>
+                <button type="submit" class="btn btn-login">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Entrar
+                </button>
+            </form>
+
+            <div class="back-link">
+                <a href="{% url 'scheduling:home' %}">
+                    <i class="fas fa-arrow-left mr-1"></i>Voltar para o site
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

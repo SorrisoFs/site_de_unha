@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -239,6 +240,7 @@ def cancel_booking(request):
 # ADMIN VIEWS (Authentication Required)
 # =============================================================================
 
+@login_required
 @staff_member_required
 def admin_dashboard(request):
     """Admin dashboard with overview statistics."""
@@ -261,6 +263,7 @@ def admin_dashboard(request):
     return render(request, 'scheduling/admin/dashboard.html', context)
 
 
+@login_required
 @staff_member_required
 def admin_scheduling_list(request):
     """List all schedulings with filtering."""
@@ -287,6 +290,7 @@ def admin_scheduling_list(request):
     })
 
 
+@login_required
 @staff_member_required
 def admin_create_date_slot(request):
     """Create a date slot with auto-generated time slots."""
@@ -304,6 +308,7 @@ def admin_create_date_slot(request):
     })
 
 
+@login_required
 @staff_member_required
 def admin_date_slot_detail(request, pk):
     """View and manage time slots for a specific date."""
@@ -316,6 +321,7 @@ def admin_date_slot_detail(request, pk):
     })
 
 
+@login_required
 @staff_member_required
 def admin_quick_schedule(request):
     """Admin quick scheduling - bypass normal flow."""
@@ -332,6 +338,7 @@ def admin_quick_schedule(request):
     })
 
 
+@login_required
 @staff_member_required
 def admin_block_time_slot(request, slot_id):
     """Block a specific time slot."""
@@ -341,6 +348,7 @@ def admin_block_time_slot(request, slot_id):
     return redirect('scheduling:admin_date_slot_detail', pk=slot.date_slot.pk)
 
 
+@login_required
 @staff_member_required
 def admin_unblock_time_slot(request, slot_id):
     """Unblock a time slot."""
@@ -350,6 +358,7 @@ def admin_unblock_time_slot(request, slot_id):
     return redirect('scheduling:admin_date_slot_detail', pk=slot.date_slot.pk)
 
 
+@login_required
 @staff_member_required
 def admin_client_list(request):
     """List all clients with their booking history."""
@@ -373,6 +382,7 @@ def admin_client_list(request):
     })
 
 
+@login_required
 @staff_member_required
 def admin_client_detail(request, pk):
     """View client details and booking history."""

@@ -6,214 +6,399 @@
 {% block extra_css %}
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
 <style>
-    .hero-section {
-        background: linear-gradient(135deg, #e91e63 0%, #f8bbd0 100%);
-        color: white;
-        padding: 60px 0;
-        margin-bottom: 40px;
-    }
-    .hero-section h1 {
-        font-size: 3rem;
-        font-weight: bold;
-        margin-bottom: 20px;
-    }
-    .hero-section p {
-        font-size: 1.3rem;
-    }
-    .calendar-section {
-        background: white;
-        border-radius: 15px;
-        padding: 30px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        margin-bottom: 40px;
-    }
-    .services-section {
-        background: #f8f9fa;
-        padding: 40px 0;
-        margin-top: 40px;
-    }
-    .service-card {
-        background: white;
-        border-radius: 10px;
-        padding: 25px;
-        text-align: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        transition: transform 0.3s;
-        height: 100%;
-    }
-    .service-card:hover {
-        transform: translateY(-5px);
-    }
-    .service-icon {
-        font-size: 3rem;
-        margin-bottom: 15px;
-    }
-    .btn-agendar {
-        background: #e91e63;
-        color: white;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 25px;
-        font-size: 1.1rem;
-        font-weight: bold;
-    }
-    .btn-agendar:hover {
-        background: #c2185b;
-        color: white;
-    }
-    #calendar {
-        max-width: 100%;
-    }
-    .fc-event {
-        background: #e91e63 !important;
-        border: none !important;
-    }
-    .fc-daygrid-day.has-slots {
-        cursor: pointer;
-    }
-    .fc-daygrid-day.has-slots:hover {
-        background: #fce4ec;
-    }
-    .modal-header {
-        background: #e91e63;
-        color: white;
-    }
-    .modal-header .close {
-        color: white;
-    }
-    .time-slot-btn {
-        margin: 5px;
-        min-width: 100px;
-    }
-    .time-slot-btn.selected {
-        background: #e91e63;
-        color: white;
-        border-color: #e91e63;
-    }
-    .fc-toolbar-title {
-        font-size: 1.5rem !important;
-    }
+/* Hero Section */
+.hero-section {
+background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+color: white;
+padding: 100px 0;
+margin-bottom: 60px;
+border-radius: 0 0 50px 50px;
+box-shadow: 0 20px 60px rgba(255, 107, 107, 0.4);
+position: relative;
+overflow: hidden;
+}
+
+.hero-section::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="10" cy="10" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="80" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+background-size: 100px 100px;
+opacity: 0.3;
+}
+
+.hero-section h1 {
+font-size: 3.5rem;
+font-weight: 900;
+margin-bottom: 25px;
+text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+animation: fadeInUp 1s ease;
+}
+
+.hero-section p {
+font-size: 1.4rem;
+opacity: 0.98;
+animation: fadeInUp 1s ease 0.3s both;
+}
+
+@keyframes fadeInUp {
+from {
+opacity: 0;
+transform: translateY(30px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+.cta-button {
+background: white;
+color: #ff6b6b;
+border: none;
+padding: 18px 45px;
+border-radius: 50px;
+font-size: 1.2rem;
+font-weight: 800;
+transition: all 0.3s;
+box-shadow: 0 10px 30px rgba(255, 255, 255, 0.4);
+display: inline-block;
+text-decoration: none;
+}
+
+.cta-button:hover {
+transform: translateY(-5px) scale(1.05);
+box-shadow: 0 15px 40px rgba(255, 255, 255, 0.5);
+color: #ff6b6b;
+}
+
+.calendar-section {
+background: white;
+border-radius: 30px;
+padding: 50px 40px;
+box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+margin-bottom: 60px;
+}
+
+.services-section {
+background: white;
+padding: 80px 0;
+margin-top: 60px;
+border-radius: 50px 50px 0 0;
+box-shadow: 0 -10px 40px rgba(0,0,0,0.05);
+}
+
+.service-card {
+background: white;
+border-radius: 25px;
+padding: 40px 30px;
+text-align: center;
+box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+transition: all 0.3s;
+height: 100%;
+border: 3px solid transparent;
+}
+
+.service-card:hover {
+transform: translateY(-15px);
+border-color: #ff6b6b;
+box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+.service-icon {
+font-size: 4rem;
+margin-bottom: 20px;
+display: block;
+}
+
+.price-tag {
+font-size: 2rem;
+font-weight: 800;
+background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+-webkit-background-clip: text;
+background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+.duration-tag {
+color: #718096;
+font-size: 0.95rem;
+font-weight: 600;
+}
+
+#calendar {
+max-width: 100%;
+}
+
+.fc-event {
+background: linear-gradient(135deg, #ff6b6b, #ff8e8e) !important;
+border: none !important;
+border-radius: 15px !important;
+}
+
+.fc-daygrid-day.has-slots {
+cursor: pointer;
+background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(255, 142, 142, 0.1));
+border-radius: 10px;
+}
+
+.fc-daygrid-day.has-slots:hover {
+background: linear-gradient(135deg, rgba(255, 107, 107, 0.25), rgba(255, 142, 142, 0.2));
+}
+
+.modal-header {
+background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+color: white;
+border-radius: 25px 25px 0 0;
+}
+
+.modal-header .close {
+color: white;
+}
+
+.time-slot-btn {
+margin: 6px;
+min-width: 100px;
+border-radius: 25px;
+padding: 14px 20px;
+font-weight: 700;
+transition: all 0.3s;
+}
+
+.time-slot-btn.selected {
+background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+color: white;
+border-color: #ff6b6b;
+box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+transform: scale(1.05);
+}
+
+.how-it-works {
+background: white;
+padding: 80px 0;
+}
+
+.step-card {
+text-align: center;
+padding: 40px 30px;
+background: white;
+border-radius: 25px;
+box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+transition: all 0.3s;
+margin-bottom: 20px;
+}
+
+.step-card:hover {
+transform: translateY(-10px);
+box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+.step-icon {
+width: 90px;
+height: 90px;
+border-radius: 50%;
+background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+color: white;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 2.2rem;
+margin: 0 auto 25px;
+font-weight: 800;
+box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+}
+
+.empty-dates-message {
+text-align: center;
+padding: 60px 40px;
+color: #718096;
+background: white;
+border-radius: 25px;
+box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+}
+
+.empty-dates-message i {
+font-size: 4rem;
+color: #ff6b6b;
+margin-bottom: 20px;
+display: block;
+}
 </style>
 {% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
 <section class="hero-section">
-    <div class="container text-center">
-        <h1>Nail Salon</h1>
-        <p>Agende seu horário de forma simples e rápida</p>
-        <a href="#calendar" class="btn btn-agendar">Agendar Serviço</a>
-    </div>
+<div class="container text-center">
+<h1>💅 Nail Salon</h1>
+<p class="mb-4">Agende seu horário de forma simples e rápida</p>
+<a href="#calendar" class="cta-button">
+<i class="fas fa-calendar-plus mr-2"></i>Agendar Agora
+</a>
+</div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works">
+<div class="container">
+<h2 class="text-center mb-5" style="font-weight: 800; color: #ff6b6b;">Como Funciona</h2>
+<div class="row">
+<div class="col-md-4">
+<div class="step-card">
+<div class="step-icon">1</div>
+<h4 class="font-weight-bold mb-3">Escolha a Data</h4>
+<p class="text-muted">Selecione uma data disponível no calendário</p>
+</div>
+</div>
+<div class="col-md-4">
+<div class="step-card">
+<div class="step-icon">2</div>
+<h4 class="font-weight-bold mb-3">Escolha o Horário</h4>
+<p class="text-muted">Selecione o melhor horário disponível</p>
+</div>
+</div>
+<div class="col-md-4">
+<div class="step-card">
+<div class="step-icon">3</div>
+<h4 class="font-weight-bold mb-3">Confirme seus Dados</h4>
+<p class="text-muted">Preencha seus dados e confirme o agendamento</p>
+</div>
+</div>
+</div>
+</div>
 </section>
 
 <!-- Calendar Section -->
 <section id="calendar" class="calendar-section">
-    <div class="row">
-        <div class="col-12">
-            <h2 class="text-center mb-4">Selecione uma Data</h2>
-            <div id="calendar"></div>
-        </div>
-    </div>
+<div class="row">
+<div class="col-12">
+<h2 class="text-center mb-4" style="font-weight: 800; color: #ff6b6b;">
+<i class="fas fa-calendar-alt mr-2"></i>Selecione uma Data
+</h2>
+<div id="calendar"></div>
+{% if not available_dates_json %}
+<div class="empty-dates-message">
+<i class="fas fa-calendar-times"></i>
+<h4 class="font-weight-bold">Nenhuma data disponível no momento</h4>
+<p>Entre em contato conosco ou tente novamente mais tarde.</p>
+</div>
+{% endif %}
+</div>
+</div>
 </section>
 
 <!-- Services Section -->
 <section class="services-section">
-    <div class="container">
-        <h2 class="text-center mb-5">Nossos Serviços</h2>
-        <div class="row">
-            {% for service in services %}
-            <div class="col-md-4 mb-4">
-                <div class="service-card">
-                    <div class="service-icon">💅</div>
-                    <h4>{{ service.name }}</h4>
-                    <p class="text-muted">{{ service.description|default:"" }}</p>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="h5 text-primary mb-0">R$ {{ service.price }}</span>
-                        <small class="text-muted">{{ service.duration_minutes }} min</small>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="col-12 text-center">
-                <p>Nenhum serviço disponível no momento.</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
+<div class="container">
+<h2 class="text-center mb-5" style="font-weight: 800; color: #ff6b6b;">
+<i class="fas fa-cut mr-2"></i>Nossos Serviços
+</h2>
+<div class="row">
+{% for service in services %}
+<div class="col-md-4 mb-4">
+<div class="service-card">
+<span class="service-icon">💅</span>
+<h4 class="font-weight-bold">{{ service.name }}</h4>
+<p class="text-muted">{{ service.description|default:"" }}</p>
+<div class="d-flex justify-content-between align-items-center mt-3">
+<span class="price-tag">R$ {{ service.price }}</span>
+<span class="duration-tag">
+<i class="fas fa-clock mr-1"></i>{{ service.duration_minutes }} min
+</span>
+</div>
+</div>
+</div>
+{% empty %}
+<div class="col-12 text-center">
+<div class="empty-dates-message">
+<i class="fas fa-info-circle"></i>
+<h4 class="font-weight-bold">Nenhum serviço disponível</h4>
+<p>Entre em contato para mais informações.</p>
+</div>
+</div>
+{% endfor %}
+</div>
+</div>
 </section>
 
 <!-- Booking Modal -->
 <div class="modal fade" id="bookingModal" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="bookingModalLabel">Agendar Serviço</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="bookingForm">
-                {% csrf_token %}
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="selectedDate">Data Selecionada</label>
-                                <input type="text" class="form-control" id="selectedDate" readonly>
-                                <input type="hidden" name="date" id="selectedDateInput">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="serviceSelect">Serviço</label>
-                                <select class="form-control" name="service" id="serviceSelect" required>
-                                    <option value="">Selecione um serviço...</option>
-                                    {% for service in services %}
-                                    <option value="{{ service.id }}" data-price="{{ service.price }}" data-duration="{{ service.duration_minutes }}">
-                                        {{ service.name }} - R$ {{ service.price }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+<div class="modal-dialog modal-lg" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="bookingModalLabel">
+<i class="fas fa-calendar-check mr-2"></i>Agendar Serviço
+</h5>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+<form id="bookingForm">
+{% csrf_token %}
+<div class="modal-body">
+<div class="row">
+<div class="col-md-6">
+<div class="form-group">
+<label for="selectedDate" class="font-weight-bold"><i class="fas fa-calendar mr-2"></i>Data Selecionada</label>
+<input type="text" class="form-control" id="selectedDate" readonly>
+<input type="hidden" name="date" id="selectedDateInput">
+</div>
+</div>
+<div class="col-md-6">
+<div class="form-group">
+<label for="serviceSelect" class="font-weight-bold"><i class="fas fa-cut mr-2"></i>Serviço</label>
+<select class="form-control" name="service" id="serviceSelect" required>
+<option value="">Selecione um serviço...</option>
+{% for service in services %}
+<option value="{{ service.id }}" data-price="{{ service.price }}" data-duration="{{ service.duration_minutes }}">
+{{ service.name }} - R$ {{ service.price }} ({{ service.duration_minutes }} min)
+</option>
+{% endfor %}
+</select>
+</div>
+</div>
+</div>
 
-                    <div class="form-group">
-                        <label>Horários Disponíveis</label>
-                        <div id="timeSlots" class="d-flex flex-wrap">
-                            <!-- Time slots will be loaded here -->
-                        </div>
-                        <input type="hidden" name="time_slot_id" id="selectedTimeSlot" required>
-                        <small id="timeSlotHelp" class="form-text text-muted">Selecione um horário disponível acima.</small>
-                    </div>
+<div class="form-group">
+<label class="font-weight-bold"><i class="fas fa-clock mr-2"></i>Horários Disponíveis</label>
+<div id="timeSlots" class="d-flex flex-wrap">
+</div>
+<input type="hidden" name="time_slot_id" id="selectedTimeSlot" required>
+<small id="timeSlotHelp" class="form-text text-muted">Selecione um horário disponível acima.</small>
+</div>
 
-                    <hr>
+<hr>
 
-                    <h5 class="mb-3">Seus Dados</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="clientName">Nome Completo *</label>
-                                <input type="text" class="form-control" name="client_name" id="clientName" required placeholder="Seu nome completo">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="clientPhone">Celular *</label>
-                                <input type="tel" class="form-control" name="client_phone" id="clientPhone" required placeholder="(11) 99999-9999">
-                            </div>
-                        </div>
-                    </div>
+<h5 class="mb-3 font-weight-bold"><i class="fas fa-user mr-2"></i>Seus Dados</h5>
+<div class="row">
+<div class="col-md-6">
+<div class="form-group">
+<label for="clientName" class="font-weight-bold"><i class="fas fa-user mr-2"></i>Nome Completo *</label>
+<input type="text" class="form-control" name="client_name" id="clientName" required placeholder="Seu nome completo">
+</div>
+</div>
+<div class="col-md-6">
+<div class="form-group">
+<label for="clientPhone" class="font-weight-bold"><i class="fas fa-phone mr-2"></i>Celular *</label>
+<input type="tel" class="form-control" name="client_phone" id="clientPhone" required placeholder="(11) 99999-9999">
+</div>
+</div>
+</div>
 
-                    <div id="bookingMessage" class="d-none"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-agendar" id="confirmBooking">Confirmar Agendamento</button>
-                </div>
-            </form>
-        </div>
-    </div>
+<div id="bookingMessage" class="d-none"></div>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+<button type="submit" class="btn btn-primary" id="confirmBooking">
+<i class="fas fa-check mr-2"></i>Confirmar Agendamento
+</button>
+</div>
+</form>
+</div>
+</div>
 </div>
 
 <!-- Success Modal -->
@@ -221,7 +406,9 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="successModalLabel">Agendamento Confirmado!</h5>
+                <h5 class="modal-title" id="successModalLabel">
+                    <i class="fas fa-check-circle mr-2"></i>Agendamento Confirmado!
+                </h5>
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -238,7 +425,9 @@
                 <p class="text-muted">Você receberá este código para consultar ou cancelar seu agendamento.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                <a href="{% url 'scheduling:check_booking' %}" class="btn btn-primary">
+                    <i class="fas fa-calendar-check mr-2"></i>Ver Meus Agendamentos
+                </a>
             </div>
         </div>
     </div>
@@ -253,146 +442,148 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-    var availableDates = {{ available_dates_json|safe }};
+var calendarEl = document.getElementById('calendar');
+var availableDates = {{ available_dates_json|safe }};
 
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        locale: 'pt-br',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth'
-        },
-        buttonText: {
-            today: 'Hoje',
-            month: 'Mês'
-        },
-        events: availableDates.map(function(date) {
-            return {
-                title: 'Disponível',
-                start: date,
-                display: 'background',
-                backgroundColor: '#e91e63',
-                textColor: 'white'
-            };
-        }),
-        dateClick: function(info) {
-            var clickedDate = info.dateStr;
+if (availableDates.length === 0) {
+return;
+}
 
-            // Check if date has available slots
-            if (availableDates.includes(clickedDate)) {
-                openBookingModal(clickedDate);
-            } else {
-                alert('Não há horários disponíveis nesta data. Selecione uma data com disponibilidade.');
-            }
-        },
-        dayCellClassNames: function(arg) {
-            var dateStr = arg.date.toISOString().split('T')[0];
-            if (availableDates.includes(dateStr)) {
-                return ['has-slots'];
-            }
-            return [];
-        }
-    });
+var calendar = new FullCalendar.Calendar(calendarEl, {
+initialView: 'dayGridMonth',
+locale: 'pt-br',
+headerToolbar: {
+left: 'prev,next today',
+center: 'title',
+right: 'dayGridMonth'
+},
+buttonText: {
+today: 'Hoje',
+month: 'Mês'
+},
+events: availableDates.map(function(date) {
+return {
+title: 'Disponível',
+start: date,
+display: 'background',
+backgroundColor: '#ff6b6b',
+textColor: 'white'
+};
+}),
+dateClick: function(info) {
+var clickedDate = info.dateStr;
 
-    calendar.render();
+if (availableDates.includes(clickedDate)) {
+openBookingModal(clickedDate);
+} else {
+alert('Não há horários disponíveis nesta data. Selecione uma data com disponibilidade.');
+}
+},
+dayCellClassNames: function(arg) {
+var dateStr = arg.date.toISOString().split('T')[0];
+if (availableDates.includes(dateStr)) {
+return ['has-slots'];
+}
+return [];
+}
+});
 
-    function openBookingModal(date) {
-        $('#selectedDate').val(formatDate(date));
-        $('#selectedDateInput').val(date);
-        $('#selectedTimeSlot').val('');
-        $('#timeSlots').html('<span class="text-muted">Carregando horários...</span>');
-        $('#bookingForm')[0].reset();
-        $('#selectedDate').val(formatDate(date));
-        $('#selectedDateInput').val(date);
+calendar.render();
 
-        // Fetch available time slots
-        fetch('/api/horarios/?date=' + date)
-            .then(response => response.json())
-            .then(data => {
-                displayTimeSlots(data.slots);
-            })
-            .catch(error => {
-                $('#timeSlots').html('<span class="text-danger">Erro ao carregar horários.</span>');
-            });
+function openBookingModal(date) {
+$('#selectedDate').val(formatDate(date));
+$('#selectedDateInput').val(date);
+$('#selectedTimeSlot').val('');
+$('#timeSlots').html('<span class="text-muted"><i class="fas fa-spinner fa-spin mr-2"></i>Carregando horários...</span>');
+$('#bookingForm')[0].reset();
+$('#selectedDate').val(formatDate(date));
+$('#selectedDateInput').val(date);
+$('#bookingMessage').addClass('d-none');
 
-        $('#bookingModal').modal('show');
-    }
+fetch('/api/horarios/?date=' + date)
+.then(response => response.json())
+.then(data => {
+displayTimeSlots(data.slots);
+})
+.catch(error => {
+$('#timeSlots').html('<span class="text-danger"><i class="fas fa-exclamation-triangle mr-2"></i>Erro ao carregar horários.</span>');
+});
 
-    function displayTimeSlots(slots) {
-        var container = $('#timeSlots');
-        container.empty();
+$('#bookingModal').modal('show');
+}
 
-        if (slots.length === 0) {
-            container.html('<span class="text-muted">Não há horários disponíveis para esta data.</span>');
-            return;
-        }
+function displayTimeSlots(slots) {
+var container = $('#timeSlots');
+container.empty();
 
-        slots.forEach(function(slot) {
-            var btn = $('<button type="button" class="btn btn-outline-primary time-slot-btn">')
-                .text(slot.start_time)
-                .click(function() {
-                    $('.time-slot-btn').removeClass('selected');
-                    $(this).addClass('selected');
-                    $('#selectedTimeSlot').val(slot.id);
-                });
-            container.append(btn);
-        });
-    }
+if (slots.length === 0) {
+container.html('<span class="text-muted"><i class="fas fa-calendar-times mr-2"></i>Não há horários disponíveis para esta data.</span>');
+return;
+}
 
-    function formatDate(dateStr) {
-        var date = new Date(dateStr + 'T00:00:00');
-        return date.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    }
+slots.forEach(function(slot) {
+var btn = $('<button type="button" class="btn btn-outline-primary time-slot-btn">')
+.html('<i class="far fa-clock mr-1"></i>' + slot.start_time)
+.click(function() {
+$('.time-slot-btn').removeClass('selected');
+$(this).addClass('selected');
+$('#selectedTimeSlot').val(slot.id);
+$('#timeSlotHelp').text('Horário selecionado: ' + slot.start_time + ' - ' + slot.professional);
+});
+container.append(btn);
+});
+}
 
-    // Handle form submission
-    $('#bookingForm').on('submit', function(e) {
-        e.preventDefault();
+function formatDate(dateStr) {
+var date = new Date(dateStr + 'T00:00:00');
+return date.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
 
-        var formData = $(this).serialize();
+$('#bookingForm').on('submit', function(e) {
+e.preventDefault();
 
-        if (!$('#selectedTimeSlot').val()) {
-            $('#bookingMessage').removeClass('d-none').addClass('alert alert-danger').text('Selecione um horário.');
-            return;
-        }
+var formData = $(this).serialize();
 
-        $('#confirmBooking').prop('disabled', true).text('Aguarde...');
+if (!$('#selectedTimeSlot').val()) {
+$('#bookingMessage').removeClass('d-none').addClass('alert alert-danger').html('<i class="fas fa-exclamation-circle mr-2"></i>Selecione um horário.');
+return;
+}
 
-        fetch('/agendar/', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': getCsrfToken()
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                $('#bookingModal').modal('hide');
-                $('#bookingTokenDisplay').text(data.booking_token);
-                $('#successModal').modal('show');
-            } else {
-                $('#bookingMessage').removeClass('d-none').addClass('alert alert-danger').html(data.errors ? data.errors.join('<br>') : data.message);
-                $('#confirmBooking').prop('disabled', false).text('Confirmar Agendamento');
-            }
-        })
-        .catch(error => {
-            $('#bookingMessage').removeClass('d-none').addClass('alert alert-danger').text('Erro ao realizar agendamento. Tente novamente.');
-            $('#confirmBooking').prop('disabled', false).text('Confirmar Agendamento');
-        });
-    });
+$('#confirmBooking').prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i>Aguarde...');
 
-    function getCsrfToken() {
-        return document.querySelector('[name=csrfmiddlewaretoken]').value;
-    }
+fetch('/agendar/', {
+method: 'POST',
+body: formData,
+headers: {
+'X-CSRFToken': getCsrfToken()
+}
+})
+.then(response => response.json())
+.then(data => {
+if (data.success) {
+$('#bookingModal').modal('hide');
+$('#bookingTokenDisplay').text(data.booking_token);
+$('#successModal').modal('show');
+} else {
+$('#bookingMessage').removeClass('d-none').addClass('alert alert-danger').html('<i class="fas fa-exclamation-circle mr-2"></i>' + (data.errors ? data.errors.join('<br>') : data.message));
+$('#confirmBooking').prop('disabled', false).html('<i class="fas fa-check mr-2"></i>Confirmar Agendamento');
+}
+})
+.catch(error => {
+$('#bookingMessage').removeClass('d-none').addClass('alert alert-danger').html('<i class="fas fa-exclamation-triangle mr-2"></i>Erro ao realizar agendamento. Tente novamente.');
+$('#confirmBooking').prop('disabled', false).html('<i class="fas fa-check mr-2"></i>Confirmar Agendamento');
+});
+});
 
-    // Reset form when modal is closed
-    $('#bookingModal').on('hidden.bs.modal', function() {
-        $('#bookingForm')[0].reset();
-        $('#bookingMessage').addClass('d-none');
-        $('#confirmBooking').prop('disabled', false).text('Confirmar Agendamento');
-    });
+function getCsrfToken() {
+return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+$('#bookingModal').on('hidden.bs.modal', function() {
+$('#bookingForm')[0].reset();
+$('#bookingMessage').addClass('d-none');
+$('#confirmBooking').prop('disabled', false).html('<i class="fas fa-check mr-2"></i>Confirmar Agendamento');
+});
 });
 </script>
 {% endblock %}

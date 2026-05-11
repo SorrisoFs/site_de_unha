@@ -1,71 +1,338 @@
 {% extends 'scheduling/base.html' %}
 
-{% block title %}Horários Disponíveis{% endblock %}
+{% block title %}Agendar Serviço{% endblock %}
+
+{% block extra_css %}
+<style>
+    .booking-hero {
+        background: linear-gradient(135deg, #e91e63, #f8bbd0);
+        color: white;
+        padding: 40px 0;
+        margin-bottom: 40px;
+        border-radius: 0 0 50% 50% / 20px;
+    }
+    .filter-card {
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .slot-card {
+        border-radius: 15px;
+        transition: all 0.3s;
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
+    .slot-card:hover {
+        transform: translateY(-5px);
+        border-color: #e91e63;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .slot-card.selected {
+        border-color: #e91e63;
+        background: #fce4ec;
+    }
+    .slot-time {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #e91e63;
+    }
+    .slot-professional {
+        color: #666;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+    }
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        color: #e91e63;
+    }
+    .step-indicator {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+    }
+    .step {
+        display: flex;
+        align-items: center;
+    }
+    .step-number {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: #e0e0e0;
+        color: #666;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-right: 10px;
+    }
+    .step.active .step-number {
+        background: #e91e63;
+        color: white;
+    }
+    .step.completed .step-number {
+        background: #4caf50;
+        color: white;
+    }
+    .step-label {
+        color: #666;
+        font-weight: 500;
+    }
+    .step.active .step-label {
+        color: #e91e63;
+    }
+    .step-line {
+        width: 50px;
+        height: 2px;
+        background: #e0e0e0;
+        margin: 0 15px;
+    }
+    .step.completed + .step-line {
+        background: #4caf50;
+    }
+    .booking-form-section {
+        display: none;
+    }
+    .booking-form-section.active {
+        display: block;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<h2>Horários Disponíveis</h2>
+<div class="booking-hero">
+    <div class="container text-center">
+        <h1><i class="fas fa-calendar-check mr-2"></i>Agende seu Horário</h1>
+        <p class="mb-0">Escolha o melhor horário para você</p>
+    </div>
+</div>
 
-<form method="get" class="row g-3 mb-4">
-    <div class="col-md-3">
-        <label>Serviço</label>
-        <select name="service" class="form-control" id="serviceSelect">
-            <option value="">Selecione...</option>
-            {% for service in services %}
-            <option value="{{ service.id }}" {% if service.id == selected_service_id|add:0 %}selected{% endif %}>
-                {{ service.name }} - R$ {{ service.price }}
-            </option>
-            {% endfor %}
-        </select>
+<div class="container">
+    <div class="step-indicator">
+        <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Selecionar</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" id="step2">
+            <span class="step-number">2</span>
+            <span class="step-label">Confirmar</span>
+        </div>
     </div>
-    <div class="col-md-3">
-        <label>Profissional</label>
-        <select name="professional" class="form-control">
-            <option value="">Qualquer um</option>
-            {% for prof in professionals %}
-            <option value="{{ prof.id }}" {% if prof.id == selected_professional_id|add:0 %}selected{% endif %}>
-                {{ prof.name }}
-            </option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="col-md-3">
-        <label>Data</label>
-        <input type="date" name="date" class="form-control" value="{{ selected_date }}">
-    </div>
-    <div class="col-md-3 d-flex align-items-end">
-        <button type="submit" class="btn btn-primary btn-block">Buscar</button>
-    </div>
-</form>
 
-{% if time_slots %}
-<div class="row">
-    {% for slot in time_slots %}
-    <div class="col-md-3 mb-3">
-        <div class="card h-100">
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title">{{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }}</h5>
-                <p class="card-text">
-                    <strong>Profissional:</strong> {{ slot.date_slot.professional.name }}
-                </p>
-                <p class="card-text mt-auto">
-                    <span class="badge badge-success">Disponível</span>
-                </p>
-                <a href="{% url 'scheduling:book_slot' slot.id %}?service={{ selected_service_id }}"
-                   class="btn btn-success btn-block mt-2">
-                    Agendar
-                </a>
+    <div class="card filter-card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label><i class="fas fa-cut mr-2"></i>Serviço</label>
+                    <select name="service" class="form-control" id="serviceSelect">
+                        <option value="">Selecione...</option>
+                        {% for service in services %}
+                        <option value="{{ service.id }}" {% if service.id == selected_service_id|add:0 %}selected{% endif %}>
+                            {{ service.name }} - R$ {{ service.price }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label><i class="fas fa-user-md mr-2"></i>Profissional</label>
+                    <select name="professional" class="form-control">
+                        <option value="">Qualquer um</option>
+                        {% for prof in professionals %}
+                        <option value="{{ prof.id }}" {% if prof.id == selected_professional_id|add:0 %}selected{% endif %}>
+                            {{ prof.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label><i class="fas fa-calendar mr-2"></i>Data</label>
+                    <input type="date" name="date" class="form-control" value="{{ selected_date }}" min="{% now 'Y-m-d' %}">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if time_slots %}
+    <div class="row" id="slotsSection">
+        {% for slot in time_slots %}
+        <div class="col-md-3 mb-4">
+            <div class="card slot-card h-100" onclick="selectSlot({{ slot.id }}, '{{ slot.start_time }}')">
+                <div class="card-body text-center">
+                    <div class="slot-time">{{ slot.start_time }}</div>
+                    <p class="slot-professional mb-2">
+                        <i class="fas fa-user-md mr-1"></i>{{ slot.date_slot.professional.name }}
+                    </p>
+                    <span class="badge badge-success">
+                        <i class="fas fa-check mr-1"></i>Disponível
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="booking-form-section" id="bookingFormSection">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h4 class="mb-0"><i class="fas fa-check-circle mr-2"></i>Confirmar Agendamento</h4>
+            </div>
+            <div class="card-body">
+                <form id="confirmBookingForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="time_slot_id" id="selectedTimeSlotId">
+                    <input type="hidden" name="date" value="{{ selected_date }}">
+                    <input type="hidden" name="service" value="{{ selected_service_id }}">
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="alert alert-info">
+                                <i class="fas fa-clock mr-2"></i>
+                                <strong>Horário:</strong> <span id="selectedTimeDisplay"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-info">
+                                <i class="fas fa-user-md mr-2"></i>
+                                <strong>Profissional:</strong> <span id="selectedProfessionalDisplay"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="mb-3"><i class="fas fa-user mr-2"></i>Seus Dados</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Nome Completo *</label>
+                                <input type="text" name="client_name" class="form-control" required placeholder="Seu nome completo">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Celular *</label>
+                                <input type="tel" name="client_phone" class="form-control" required placeholder="(11) 99999-9999">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="bookingMessage"></div>
+
+                    <div class="text-right mt-4">
+                        <button type="button" class="btn btn-secondary mr-2" onclick="cancelSelection()">Voltar</button>
+                        <button type="submit" class="btn btn-primary" id="confirmBtn">
+                            <i class="fas fa-check mr-2"></i>Confirmar Agendamento
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    {% endfor %}
+    {% elif selected_date %}
+    <div class="empty-state">
+        <i class="fas fa-calendar-times"></i>
+        <h3>Nenhum horário disponível</h3>
+        <p>Não há horários disponíveis para esta data. Tente outra data ou profissional.</p>
+        <a href="{% url 'scheduling:available_slots' %}" class="btn btn-primary">
+            <i class="fas fa-redo mr-2"></i>Tentar Novamente
+        </a>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-calendar-alt"></i>
+        <h3>Selecione uma data</h3>
+        <p>Escolha uma data no formulário acima para ver os horários disponíveis.</p>
+    </div>
+    {% endif %}
 </div>
-{% elif selected_date %}
-<div class="alert alert-info">
-    Nenhum horário disponível para esta data. Tente outra data ou profissional.
-</div>
-{% else %}
-<div class="alert alert-secondary">
-    Selecione uma data para ver os horários disponíveis.
-</div>
-{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var selectedSlotId = null;
+var selectedSlotTime = null;
+var selectedProfessional = null;
+
+function selectSlot(slotId, slotTime) {
+    selectedSlotId = slotId;
+    selectedSlotTime = slotTime;
+
+    document.querySelectorAll('.slot-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    event.currentTarget.classList.add('selected');
+
+    var professional = event.currentTarget.querySelector('.slot-professional').textContent.trim();
+    selectedProfessional = professional;
+
+    document.getElementById('selectedTimeSlotId').value = slotId;
+    document.getElementById('selectedTimeDisplay').textContent = slotTime;
+    document.getElementById('selectedProfessionalDisplay').textContent = professional;
+
+    document.getElementById('slotsSection').style.display = 'none';
+    document.getElementById('bookingFormSection').classList.add('active');
+    document.getElementById('step2').classList.add('active');
+}
+
+function cancelSelection() {
+    selectedSlotId = null;
+    document.querySelectorAll('.slot-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    document.getElementById('slotsSection').style.display = 'flex';
+    document.getElementById('bookingFormSection').classList.remove('active');
+    document.getElementById('step2').classList.remove('active');
+}
+
+document.getElementById('confirmBookingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var formData = new FormData(this);
+
+    if (!formData.get('time_slot_id')) {
+        showMessage('Selecione um horário.', 'danger');
+        return;
+    }
+
+    var submitBtn = document.getElementById('confirmBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Aguarde...';
+
+    fetch('{% url "scheduling:book_service" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('Agendamento realizado com sucesso!', 'success');
+            setTimeout(function() {
+                window.location.href = '{% url "scheduling:check_booking" %}?token=' + data.booking_token;
+            }, 1500);
+        } else {
+            showMessage(data.errors ? data.errors.join('<br>') : 'Erro ao realizar agendamento.', 'danger');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Confirmar Agendamento';
+        }
+    })
+    .catch(error => {
+        showMessage('Erro ao realizar agendamento. Tente novamente.', 'danger');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Confirmar Agendamento';
+    });
+});
+
+function showMessage(message, type) {
+    var msgDiv = document.getElementById('bookingMessage');
+    msgDiv.className = 'alert alert-' + type;
+    msgDiv.innerHTML = message;
+    msgDiv.style.display = 'block';
+}
+</script>
 {% endblock %}
